@@ -1,0 +1,11 @@
+{
+  "name": "jd-return-html-editor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-template.mjs",
+    "build:template": "node scripts/build-template.mjs",
+    "dev": "node scripts/build-template.mjs"
+  }
+}

@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>京东退货详情修改器</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      background: #f5f5f5;
+      color: #242424;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+    }
+    main {
+      width: min(900px, 100%);
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 8px;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, .07);
+      overflow: hidden;
+    }
+    header {
+      padding: 24px 28px;
+      border-bottom: 1px solid #eeeeee;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.25;
+    }
+    p {
+      margin: 0;
+      color: #666;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+    .badge {
+      flex: 0 0 auto;
+      color: #c62828;
+      border: 1px solid #f0b9b9;
+      background: #fff7f7;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 13px;
+    }
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+      gap: 24px;
+      padding: 28px;
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 16px;
+    }
+    .panel {
+      min-width: 0;
+    }
+    label {
+      display: block;
+      margin: 14px 0 7px;
+      color: #555;
+      font-size: 14px;
+    }
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid #d8d8d8;
+      border-radius: 6px;
+      padding: 11px 12px;
+      font: inherit;
+      font-size: 15px;
+      outline: none;
+      background: #fff;
+    }
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+    input:focus,
+    textarea:focus {
+      border-color: #d93025;
+      box-shadow: 0 0 0 3px rgba(217, 48, 37, .12);
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    button {
+      border: 0;
+      border-radius: 6px;
+      padding: 11px 16px;
+      color: #fff;
+      background: #d93025;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+    }
+    button.secondary {
+      background: #333;
+    }
+    button:disabled {
+      cursor: not-allowed;
+      opacity: .55;
+    }
+    .status,
+    .log {
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      background: #fafafa;
+      padding: 14px;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      font-size: 13px;
+    }
+    .log {
+      min-height: 212px;
+      margin-top: 12px;
+      overflow: auto;
+      font-family: Consolas, "Microsoft YaHei", monospace;
+    }
+    .hint {
+      margin-top: 12px;
+      border: 1px solid #f3df9c;
+      border-radius: 6px;
+      background: #fff8e1;
+      color: #685000;
+      padding: 12px;
+      line-height: 1.7;
+      font-size: 13px;
+    }
+    @media (max-width: 760px) {
+      body {
+        align-items: flex-start;
+        padding: 14px;
+      }
+      header,
+      .content {
+        display: block;
+        padding: 18px;
+      }
+      .badge {
+        display: inline-block;
+        margin-top: 12px;
+      }
+      .panel + .panel {
+        margin-top: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>京东退货详情修改器</h1>
+        <p>基于内置模板生成修改后的 HTML，适合直接部署到 Vercel。</p>
+      </div>
+      <div class="badge">内置模板</div>
+    </header>
+
+    <div class="content">
+      <section class="panel">
+        <h2>商品寄回地址</h2>
+        <label for="address">寄回地址</label>
+        <textarea id="address" placeholder="请输入新的寄回地址"></textarea>
+
+        <label for="name">收件人</label>
+        <input id="name" value="肖稳" placeholder="请输入收件人">
+
+        <label for="phone">联系电话</label>
+        <input id="phone" value="17703790089" placeholder="请输入联系电话">
+
+        <div class="actions">
+          <button id="generate">生成并打开页面</button>
+          <button id="preview" class="secondary">预览源码</button>
+        </div>
+
+        <div class="hint">模板推荐使用占位符：{{RETURN_ADDRESS}}、{{RETURN_NAME}}、{{RETURN_PHONE}}。地址也兼容 {{USER_INPUT}}。</div>
+      </section>
+
+      <section class="panel">
+        <h2>模板状态</h2>
+        <div id="status" class="status">正在读取内置模板...</div>
+        <div id="log" class="log"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="template.js"></script>
+  <script>
+    const template = window.JD_RETURN_TEMPLATE || "";
+    const addressInput = document.getElementById("address");
+    const nameInput = document.getElementById("name");
+    const phoneInput = document.getElementById("phone");
+    const generateButton = document.getElementById("generate");
+    const previewButton = document.getElementById("preview");
+    const statusBox = document.getElementById("status");
+    const logBox = document.getElementById("log");
+
+    const replacements = [
+      {
+        label: "寄回地址",
+        getValue: () => addressInput.value.trim(),
+        tokens: ["{{RETURN_ADDRESS}}", "{{USER_INPUT}}", "{{ADDRESS}}"],
+        defaults: []
+      },
+      {
+        label: "收件人",
+        getValue: () => nameInput.value.trim(),
+        tokens: ["{{RETURN_NAME}}", "{{NAME}}"],
+        defaults: ["肖稳"]
+      },
+      {
+        label: "联系电话",
+        getValue: () => phoneInput.value.trim(),
+        tokens: ["{{RETURN_PHONE}}", "{{PHONE}}"],
+        defaults: ["17703790089"]
+      }
+    ];
+
+    function htmlEscape(value) {
+      return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function escapeRegExp(value) {
+      return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function replaceAllLiteral(html, search, value) {
+      const escapedValue = htmlEscape(value);
+      const next = html.replace(new RegExp(escapeRegExp(search), "g"), () => escapedValue);
+      return { html: next, count: html === next ? 0 : html.split(search).length - 1 };
+    }
+
+    function buildHtml() {
+      let html = template;
+      const report = [];
+
+      for (const item of replacements) {
+        const value = item.getValue();
+        if (!value) {
+          report.push(`${item.label}：未填写，跳过`);
+          continue;
+        }
+
+        let count = 0;
+        for (const token of item.tokens) {
+          const result = replaceAllLiteral(html, token, value);
+          html = result.html;
+          count += result.count;
+        }
+
+        if (count === 0) {
+          for (const defaultValue of item.defaults) {
+            const result = replaceAllLiteral(html, defaultValue, value);
+            html = result.html;
+            count += result.count;
+          }
+        }
+
+        report.push(count > 0
+          ? `${item.label}：已替换 ${count} 处`
+          : `${item.label}：未找到占位符或默认值`);
+      }
+
+      return { html, report };
+    }
+
+    function openHtml(html) {
+      const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      window.location.href = url;
+    }
+
+    function renderStatus() {
+      if (!template) {
+        statusBox.textContent = "未读取到 template.js。请先运行 npm run build:template 生成内置模板。";
+        generateButton.disabled = true;
+        previewButton.disabled = true;
+        return;
+      }
+
+      const lines = [`模板大小：${template.length.toLocaleString()} 字符`, ""];
+      for (const item of replacements) {
+        const tokenHits = item.tokens.filter((token) => template.includes(token));
+        const defaultHits = item.defaults.filter((value) => template.includes(value));
+        lines.push(`${item.label}：${tokenHits.concat(defaultHits).join(" / ") || "未检测到可替换标记"}`);
+      }
+      statusBox.textContent = lines.join("\n");
+    }
+
+    generateButton.addEventListener("click", () => {
+      const { html, report } = buildHtml();
+      logBox.textContent = report.join("\n");
+      if (html === template) {
+        logBox.textContent += "\n\n没有生成变化，请检查 template-source.html 里是否已经放入占位符。";
+        return;
+      }
+      logBox.textContent += "\n\n已生成页面，正在打开...";
+      openHtml(html);
+    });
+
+    previewButton.addEventListener("click", () => {
+      const { html, report } = buildHtml();
+      logBox.textContent = `${report.join("\n")}\n\n${html.slice(0, 3000)}${html.length > 3000 ? "\n\n...预览已截断" : ""}`;
+    });
+
+    renderStatus();
+  </script>
+</body>
+</html>
