@@ -433,20 +433,17 @@
       {
         label: "寄回地址",
         getValue: () => addressInput.value.trim(),
-        tokens: ["{{RETURN_ADDRESS}}", "{{USER_INPUT}}", "{{ADDRESS}}"],
-        defaults: []
+        tokens: ["{{RETURN_ADDRESS}}"]
       },
       {
         label: "收件人",
         getValue: () => nameInput.value.trim(),
-        tokens: ["{{RETURN_NAME}}", "{{NAME}}"],
-        defaults: ["肖稳"]
+        tokens: ["{{RETURN_NAME}}"]
       },
       {
         label: "联系电话",
         getValue: () => phoneInput.value.trim(),
-        tokens: ["{{RETURN_PHONE}}", "{{PHONE}}"],
-        defaults: ["17703790089"]
+        tokens: ["{{RETURN_PHONE}}"]
       }
     ];
 
@@ -568,14 +565,6 @@
           const result = replaceAllLiteral(html, token, value);
           html = result.html;
           count += result.count;
-        }
-
-        if (count === 0) {
-          for (const defaultValue of item.defaults) {
-            const result = replaceAllLiteral(html, defaultValue, value);
-            html = result.html;
-            count += result.count;
-          }
         }
 
         total += count;
