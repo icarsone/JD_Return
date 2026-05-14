@@ -31,11 +31,14 @@
     }
 
     .hero {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
       padding: 28px 4px 24px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
     h1 {
@@ -59,11 +62,11 @@
       gap: 8px;
       border: 1px solid #e8e9ed;
       border-radius: 999px;
-      padding: 10px 14px;
+      padding: 8px 12px;
       background: rgba(255, 255, 255, .82);
       box-shadow: 0 10px 24px rgba(17, 24, 39, .06);
       color: #3e424b;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .template-pill::before {
@@ -145,7 +148,7 @@
     }
 
     textarea {
-      min-height: 132px;
+      min-height: 76px;
       resize: vertical;
       line-height: 1.7;
     }
@@ -316,14 +319,6 @@
         padding: 18px;
       }
 
-      .hero {
-        display: block;
-      }
-
-      .template-pill {
-        margin-top: 16px;
-      }
-
       .workspace {
         grid-template-columns: 1fr;
       }
@@ -361,11 +356,11 @@
 <body>
   <main>
     <section class="hero">
-      <div>
+      <div class="title-row">
         <h1>京东退货详情修改器</h1>
-        <p class="subtitle">填写商品寄回信息，直接打开修改后的页面。历史记录保存在当前浏览器。</p>
+        <div class="template-pill" id="templateStatus">无需登录</div>
       </div>
-      <div class="template-pill" id="templateStatus">无需登录</div>
+      <p class="subtitle">填写商品寄回信息，直接打开修改后的页面。历史记录保存在当前浏览器。</p>
     </section>
 
     <section class="workspace">
