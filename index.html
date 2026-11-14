@@ -2,10 +2,39 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0; url=./京东退货详情修改器.html">
-  <title>京东退货详情修改器</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>京东退货详情修改器 · SIM101</title>
+  <link rel="stylesheet" href="/styles.css?v=2">
+  <script src="/address-parser.js?v=2" defer></script>
+  <script src="/app.js?v=2" defer></script>
 </head>
 <body>
-  <a href="./京东退货详情修改器.html">打开京东退货详情修改器</a>
+  <main>
+    <header class="hero"><span class="eyebrow">SIM101 · 退货工具</span><h1>京东退货详情修改器</h1><p class="subtitle">粘贴收件信息，自动拆分地址、姓名与电话。核对后，一键生成页面。</p></header>
+    <div class="workspace">
+      <section class="surface form-panel" aria-label="编辑寄回信息">
+        <div class="section-title"><span class="step">1</span><h2>粘贴并识别</h2></div>
+        <label for="smartInput" class="sr-only">完整收件信息</label>
+        <textarea id="smartInput" maxlength="8000" placeholder="例如：张三，13800138000，广东省深圳市南山区科技园1号&#10;支持多行、带字段名、姓名电话在前或在后的常见格式"></textarea>
+        <p class="hint">粘贴后自动识别，也可以直接在下方「寄回地址」中粘贴整段信息。</p>
+        <button id="recognize" type="button" class="secondary">重新识别</button>
+        <div class="divider"></div>
+        <div class="section-title"><span class="step">2</span><h2>核对寄回信息</h2></div>
+        <form id="returnForm" action="/generate" method="post" accept-charset="UTF-8">
+          <div class="field-grid">
+            <div class="field full"><label for="address">寄回地址</label><textarea name="address" id="address" autocomplete="street-address" placeholder="省市区、街道、门牌号" maxlength="1000" required></textarea></div>
+            <div class="field"><label for="name">收件人</label><input name="name" id="name" autocomplete="name" placeholder="姓名或收件部门" maxlength="80" required></div>
+            <div class="field"><label for="phone">联系电话</label><input name="phone" id="phone" type="tel" autocomplete="tel" placeholder="手机、座机或分机号" maxlength="80" required></div>
+          </div>
+          <div class="actions"><button id="generate" class="primary" type="submit">生成并打开页面</button><button class="ghost" type="submit" formaction="/download">下载 HTML</button><button id="resetForm" class="ghost" type="button">清空</button></div>
+        </form>
+        <div id="message" class="message" role="status" aria-live="polite"></div>
+        <noscript><p class="hint">当前未启用 JavaScript。可手动填写三个字段并生成页面。</p></noscript>
+      </section>
+      <aside class="surface" aria-label="历史记录"><div class="history-head"><div><h2>历史记录</h2><span class="history-count" id="historyCount">暂无记录</span></div><button id="clearHistory" type="button" class="text">清空</button></div><div class="history-list" id="historyList"></div></aside>
+    </div>
+    <p class="privacy">识别在当前浏览器完成；生成时仅将核对后的三个字段提交到本站服务器，不保存到服务器。历史记录保存在当前浏览器。</p>
+  </main>
 </body>
 </html>

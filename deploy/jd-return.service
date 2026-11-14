@@ -1,0 +1,20 @@
+[Unit]
+Description=SIM101 JD return details editor
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/jd-return/current
+ExecStart=/usr/bin/python3 /opt/jd-return/current/server.py --host 127.0.0.1 --port 4321
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
