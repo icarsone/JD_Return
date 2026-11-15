@@ -16,7 +16,26 @@ html = html.replace(/<!--[\s\S]*?-->/g, '')
 for (const token of ['RETURN_ADDRESS', 'RETURN_NAME', 'RETURN_PHONE']) {
   if (!html.includes(`{{${token}}}`)) throw new Error(`Missing template token: ${token}`);
 }
-html += '\n</body></html>\n';
+// Keep the action bar outside the saved app's layout and scrolling ancestors.
+const actionsTag = '<div class="css-175oi2r r-1awozwy r-14lw9ot r-1lz4bg0 r-10n6uld r-18u37iz r-1sn7ly2 r-1wtj0ep r-1qhn6m8 r-1qfoi16">';
+const actionsStart = html.indexOf(actionsTag);
+if (actionsStart < 0 || html.lastIndexOf(actionsTag) !== actionsStart) {
+  throw new Error('Expected exactly one return action bar in the template');
+}
+const divTags = /<\/?div\b[^>]*>/g;
+divTags.lastIndex = actionsStart;
+let depth = 0;
+let actionsEnd = -1;
+let tag;
+while ((tag = divTags.exec(html))) {
+  depth += tag[0].startsWith('</') ? -1 : 1;
+  if (depth === 0) { actionsEnd = divTags.lastIndex; break; }
+}
+if (actionsEnd < 0) throw new Error('Cannot find the closing return action bar tag');
+const actions = html.slice(actionsStart, actionsEnd).replace('<div ', '<div id="jd-return-actions" role="toolbar" aria-label="退货操作" ');
+html = html.slice(0, actionsStart) + html.slice(actionsEnd);
+const resultStyles = await readFile(resolve(root, 'result.css'), 'utf8');
+html += `\n<style id="jd-return-layout">${resultStyles}</style>\n${actions}\n</body></html>\n`;
 const output = resolve(root, 'dist');
 await mkdir(resolve(output, 'public'), { recursive: true });
 await writeFile(resolve(output, 'template.html'), html, 'utf8');

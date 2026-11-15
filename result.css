@@ -1,0 +1,24 @@
+/* Leave enough scrolling room for content behind the persistent action bar. */
+body {
+  box-sizing: border-box;
+  padding-bottom: 70px !important;
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+#jd-return-actions {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  height: 54px;
+  height: calc(54px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: #fff;
+  pointer-events: auto;
+}
